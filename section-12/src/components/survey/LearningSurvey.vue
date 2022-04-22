@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+import config from '../../config.js';
 export default {
   data() {
     return {
@@ -46,20 +48,25 @@ export default {
       invalidInput: false,
     };
   },
-  emits: ['survey-submit'],
+  // emits: ['survey-submit'],
   methods: {
-    submitSurvey() {
+    async submitSurvey() {
       if (this.enteredName === '' || !this.chosenRating) {
         this.invalidInput = true;
         return;
       }
       this.invalidInput = false;
 
-      this.$emit('survey-submit', {
-        userName: this.enteredName,
-        rating: this.chosenRating,
-      });
+      // this.$emit('survey-submit', {
+      //   userName: this.enteredName,
+      //   rating: this.chosenRating,
+      // });
 
+      await axios.post(config.firebaseURL, JSON.stringify({
+          name: this.enteredName,
+          rating: this.chosenRating,
+        }),
+      );
       this.enteredName = '';
       this.chosenRating = null;
     },
