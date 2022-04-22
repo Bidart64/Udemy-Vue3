@@ -42,10 +42,12 @@ export default {
         this.isLoading = true;
         this.error = null;
         const response = await axios.get(config.firebaseURL);
-        console.log(`file: UserExperiences.vue • line 44 • response`, response)
-        console.log(`test`, Object.entries(response.data[0]))
-        response.data?.forEach((id) => this.results.push({id, name: response.data[id].name, rating: response.data[id].rating}));
-        console.log(`file: UserExperiences.vue • line 47 • this.results`, this.results)
+        this.results = Object.entries(response.data).map(([key, value]) => {
+          return {
+            id: key,
+            ...value
+            }
+          });
         this.isLoading = false;
         return 
       } catch (error) {
