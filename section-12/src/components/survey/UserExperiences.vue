@@ -5,9 +5,11 @@
       <div>
         <base-button @click="loadExperiences">Load Submitted Experiences</base-button>
       </div>
-      <p v-if="isLoading">Loading</p>
-      <p v-else-if="!results?.length > 0">No stored experiences found. Start adding some surveys results.</p>
-      <ul v-else>
+      <!-- <p v-if="isLoading">Loading</p> -->
+      <!-- <p v-else-if="!results?.length > 0">No stored experiences found. Start adding some surveys results.</p> -->
+      <!-- <p v-else-if="error">{{ error }}</p> -->
+      <!-- <ul v-else> -->
+      <ul>
         <survey-result
           v-for="result in results"
           :key="result.id"
@@ -31,14 +33,24 @@ export default {
     return {
       results: [],
       isLoading: false,
+      error: null,
     };
   },
   methods: {
     async loadExperiences() {
-      this.isLoading = true;
-      const response = await axios.get(config.firebaseURL);
-      this.results = response.data;
-      this.isLoading = false;
+      try {
+        this.isLoading = true;
+        this.error = null;
+        const response = await axios.get(config.firebaseURL);
+        console.log(`file: UserExperiences.vue • line 44 • response`, response)
+        console.log(`test`, Object.entries(response.data[0]))
+        response.data?.forEach((id) => this.results.push({id, name: response.data[id].name, rating: response.data[id].rating}));
+        console.log(`file: UserExperiences.vue • line 47 • this.results`, this.results)
+        this.isLoading = false;
+        return 
+      } catch (error) {
+        this.error = 'Failed to fetch data - please try again later.';
+      }
     },
   },
   mounted() {
